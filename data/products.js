@@ -3,7 +3,7 @@
 const products = [
   {
     id: 1,
-    slug: "smartphone-x12",   // 
+    slug: "smartphone-x12",
     name: "Smartphone X12",
     price: 35000,
     image: "/images/smartphone.jpg",

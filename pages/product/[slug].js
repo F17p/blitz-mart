@@ -1,42 +1,36 @@
-import { useRouter } from "next/router";
 import products from "../../data/products.js";
+import Link from "next/link";
 
+export default function ProductPage({ product }) {
+  if (!product) {
+    return <p>Produto não encontrado.</p>;
+  }
+
+  return (
+    <div style={{ padding: "20px" }}>
+      <h1>{product.name}</h1>
+      <img src={product.image} alt={product.name} width="300" />
+      <p>{product.description}</p>
+      <p><strong>Preço:</strong> {product.price} Kz</p>
+      <Link href="/">← Voltar à loja</Link>
+    </div>
+  );
+}
+
+// Gera todas as rotas possíveis (um para cada produto)
 export async function getStaticPaths() {
   const paths = products.map((product) => ({
-    params: { slug: product.slug },
+    params: { slug: product.slug.toString() }, // 👈 garante que slug é string
   }));
 
   return { paths, fallback: false };
 }
 
+// Busca os dados de cada produto
 export async function getStaticProps({ params }) {
-  const product = products.find((p) => p.slug === params.slug);
-  return { props: { product } };
-}
+  const product = products.find((p) => p.slug.toString() === params.slug);
 
-export default function ProductPage({ product }) {
-  const router = useRouter();
-
-  if (!product) return <p>Produto não encontrado.</p>;
-
-  return (
-    <div className="p-6 max-w-3xl mx-auto">
-      <h1 className="text-3xl font-bold">{product.name}</h1>
-      <img
-        src={product.image}
-        alt={product.name}
-        className="w-80 h-80 object-cover mt-4 rounded-xl shadow-md"
-      />
-      <p className="mt-6 text-gray-700">{product.description}</p>
-      <p className="mt-4 text-xl font-semibold text-indigo-600">
-        {product.price} AOA
-      </p>
-      <button
-        onClick={() => alert("Adicionar ao carrinho em breve!")}
-        className="mt-6 px-6 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700"
-      >
-        Adicionar ao Carrinho
-      </button>
-    </div>
-  );
+  return {
+    props: { product: product || null },
+  };
 }
